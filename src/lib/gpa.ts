@@ -23,7 +23,9 @@ export function calculateGPA(courses: Course[]): number {
 
   courses.forEach(course => {
     const credits = Number(course.credits) || 0;
-    if (credits > 0) {
+    // Exclude Pass/Fail (P grade) courses from GPA calculation.
+    // F and Z grades are included as they are failed attempts.
+    if (credits > 0 && course.grade !== 'P') {
       totalPoints += gradeToPoints(course.grade) * credits;
       totalCredits += credits;
     }
