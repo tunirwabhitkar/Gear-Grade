@@ -18,34 +18,33 @@ export function gradeToPoints(grade: string): number {
 }
 
 export function calculateGPA(courses: Course[]): number {
-  // Filter for courses to be included in GPA/CGPA calculation.
-  // This excludes non-credit bearing courses (credits === 0) and 'P' (Pass/Fail) grades.
-  const relevantCourses = courses.filter(course => {
-    const credits = Number(course.credits) || 0;
-    return credits > 0 && course.grade !== 'P';
-  });
+  let totalPoints = 0;
+  let totalCreditsAttempted = 0;
 
-  if (relevantCourses.length === 0) {
+  for (const course of courses) {
+    const credits = Number(course.credits) || 0;
+    const grade = course.grade;
+
+    // Rule: Exclude non-credit-bearing courses (0 credits) and 'P' (Pass) grades from GPA calculations.
+    // These courses do not contribute to the numerator or the denominator.
+    if (credits === 0 || grade === 'P') {
+      continue;
+    }
+
+    // For all other courses (including those with 'F' or 'Z' grades), add credits to the denominator.
+    totalCreditsAttempted += credits;
+
+    // Add the weighted grade points to the numerator.
+    // gradeToPoints returns 0 for 'F' and 'Z', so failed courses add 0 to the total points.
+    totalPoints += gradeToPoints(grade) * credits;
+  }
+
+  if (totalCreditsAttempted === 0) {
     return 0;
   }
 
-  // Numerator: Sum of (Grade Point * Credits).
-  // For 'F' and 'Z' grades, gradeToPoints returns 0, correctly adding 0 to the sum.
-  const totalPoints = relevantCourses.reduce((acc, course) => {
-    const credits = Number(course.credits) || 0;
-    return acc + gradeToPoints(course.grade) * credits;
-  }, 0);
-
-  // Denominator: Sum of credits for all relevant courses, including failed ones ('F', 'Z').
-  const totalCredits = relevantCourses.reduce((acc, course) => {
-    const credits = Number(course.credits) || 0;
-    return acc + credits;
-  }, 0);
-
-  if (totalCredits === 0) {
-    return 0;
-  }
-
-  const gpa = totalPoints / totalCredits;
+  const gpa = totalPoints / totalCreditsAttempted;
+  
+  // Return the calculated GPA, or 0 if the result is not a number.
   return Number.isNaN(gpa) ? 0 : gpa;
 }
