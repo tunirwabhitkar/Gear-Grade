@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import type { Course } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,38 +21,36 @@ const MANDATORY_GRADE_OPTIONS = [
 ];
 
 export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: CourseRowProps) {
-  const [isCreditLocked, setIsCreditLocked] = useState(false);
-  const [isMandatory, setIsMandatory] = useState(false);
+  // Calculate derived state directly in the render function to avoid state update delays.
+  const upperCaseName = course.name.trim().toUpperCase();
+  const creditsForCourse = subjectCredits[upperCaseName];
+  const isCreditLocked = creditsForCourse !== undefined;
+  const isMandatory = isCreditLocked && creditsForCourse === 0;
 
+  // This effect synchronizes the parent state with the canonical data from subjectCredits.
   useEffect(() => {
-    const upperCaseName = course.name.trim().toUpperCase();
-    const credits = subjectCredits[upperCaseName];
-    const creditIsDefined = credits !== undefined;
-    
-    setIsCreditLocked(creditIsDefined);
-    const isNowMandatory = creditIsDefined && credits === 0;
-    setIsMandatory(isNowMandatory);
-
     const updates: Partial<Course> = {};
     let needsUpdate = false;
 
-    if (creditIsDefined && course.credits !== credits) {
-      updates.credits = credits;
+    // If credit is locked and the current course credit differs, update it.
+    if (isCreditLocked && course.credits !== creditsForCourse) {
+      updates.credits = creditsForCourse;
       needsUpdate = true;
     }
 
-    if (isNowMandatory) {
+    // If the course is mandatory, ensure the grade is either 'P' or 'F'.
+    if (isMandatory) {
       if (course.grade !== 'P' && course.grade !== 'F') {
-        updates.grade = 'P';
+        updates.grade = 'P'; // Default to 'P' for new mandatory courses
         needsUpdate = true;
       }
     }
     
+    // If any updates are needed, call the onUpdate function to update the parent state.
     if (needsUpdate) {
         onUpdate(updates);
     }
-
-  }, [course.name, course.credits, course.grade, onUpdate]);
+  }, [course.name, course.credits, course.grade, isCreditLocked, isMandatory, creditsForCourse, onUpdate]);
   
   const regularGradeOptions = GRADE_OPTIONS.filter(g => g.value !== 'P');
   const currentGradeOptions = isMandatory ? MANDATORY_GRADE_OPTIONS : regularGradeOptions;
@@ -69,8 +67,8 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
         type="number"
         min="0"
         placeholder="Credits"
-        value={course.credits}
-        onChange={(e) => onUpdate({ credits: e.target.valueAsNumber })}
+        value={isCreditLocked ? creditsForCourse : course.credits}
+        onChange={(e) => !isCreditLocked && onUpdate({ credits: e.target.valueAsNumber })}
         className="w-24"
         disabled={isCreditLocked}
         title={isCreditLocked ? "Credits are automatically set for this course code." : "Enter course credits"}
