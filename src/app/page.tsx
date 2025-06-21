@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
+import { Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, HeadingLevel } from 'docx';
+import { saveAs } from 'file-saver';
 import { useSemesters } from '@/hooks/use-semesters';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,10 +17,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { FileDown, Plus, RotateCcw, Cog } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { FileDown, Plus, RotateCcw, Cog, ChevronDown, FileText, FileSpreadsheet, FileSignature } from 'lucide-react';
 import LoadingScreen from '@/components/geargrade/loading-screen';
 import AppHeader from '@/components/geargrade/header';
 import SemesterCard from '@/components/geargrade/semester-card';
+import { calculateGPA } from '@/lib/gpa';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,8 +44,88 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handlePrint = () => {
+  const handlePrintPdf = () => {
     window.print();
+  };
+
+  const handleExportExcel = () => {
+    const wb = XLSX.utils.book_new();
+
+    const allCoursesData = semesters.flatMap(semester => 
+        semester.courses.map(course => ({
+            'Semester': semester.name,
+            'Course Name': course.name,
+            'Credits': course.credits,
+            'Grade': course.grade
+        }))
+    );
+    
+    allCoursesData.push({}); // Spacer
+    allCoursesData.push({ 'Semester': 'CGPA', 'Course Name': cgpa.toFixed(2) });
+    allCoursesData.push({ 'Semester': 'Total Credits', 'Course Name': totalCredits.toFixed(1) });
+
+    const ws = XLSX.utils.json_to_sheet(allCoursesData);
+    XLSX.utils.book_append_sheet(wb, ws, 'Academic Report');
+    XLSX.writeFile(wb, 'GearGrade_Report.xlsx');
+  };
+
+  const handleExportWord = () => {
+    const semesterSections = semesters.map(semester => {
+        const semesterGpa = calculateGPA(semester.courses);
+        
+        const courseRows = semester.courses.map(course => {
+            return new TableRow({
+                children: [
+                    new TableCell({ children: [new Paragraph(course.name)] }),
+                    new TableCell({ children: [new Paragraph(String(course.credits))] }),
+                    new TableCell({ children: [new Paragraph(course.grade)] }),
+                ],
+            });
+        });
+
+        const headerRow = new TableRow({
+            tableHeader: true,
+            children: [
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Course Name", bold: true })]})] }),
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Credits", bold: true })]})] }),
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Grade", bold: true })]})] }),
+            ],
+        });
+
+        return [
+            new Paragraph({
+                text: `${semester.name} (SGPA: ${semesterGpa.toFixed(2)})`,
+                heading: HeadingLevel.HEADING_2,
+                spacing: { before: 300, after: 150 },
+            }),
+            new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                rows: [headerRow, ...courseRows],
+            }),
+        ];
+    }).flat();
+
+    const doc = new Document({
+        sections: [{
+            children: [
+                new Paragraph({ text: "GearGrade - Academic Report", heading: HeadingLevel.HEADING_1 }),
+                ...semesterSections,
+                new Paragraph({
+                    text: `\nOverall CGPA: ${cgpa.toFixed(2)}`,
+                    heading: HeadingLevel.HEADING_2,
+                    spacing: { before: 400 },
+                }),
+                new Paragraph({
+                    text: `Total Credits Earned: ${totalCredits.toFixed(1)}`,
+                    heading: HeadingLevel.HEADING_2,
+                }),
+            ],
+        }],
+    });
+
+    Packer.toBlob(doc).then(blob => {
+        saveAs(blob, "GearGrade_Report.docx");
+    });
   };
 
   if (isLoading) {
@@ -58,9 +143,28 @@ export default function Home() {
             <Button onClick={addSemester}>
               <Plus className="mr-2 h-4 w-4" /> Add Semester
             </Button>
-            <Button variant="outline" onClick={handlePrint}>
-              <FileDown className="mr-2 h-4 w-4" /> Export
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <FileDown className="mr-2 h-4 w-4" /> Export As
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handlePrintPdf}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>PDF</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportExcel}>
+                  <FileSpreadsheet className="mr-2 h-4 w-4" />
+                  <span>Excel (.xlsx)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportWord}>
+                  <FileSignature className="mr-2 h-4 w-4" />
+                  <span>Word (.docx)</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
              <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive">
@@ -100,11 +204,11 @@ export default function Home() {
                 key={semester.id}
                 semester={semester}
                 semesterIndex={index}
-                onUpdate={updateSemester}
-                onDelete={deleteSemester}
-                onAddCourse={addCourse}
-                onUpdateCourse={updateCourse}
-                onDeleteCourse={deleteCourse}
+                updateSemester={updateSemester}
+                deleteSemester={deleteSemester}
+                addCourse={addCourse}
+                updateCourse={updateCourse}
+                deleteCourse={deleteCourse}
                 isOnlySemester={semesters.length === 1}
               />
             ))}

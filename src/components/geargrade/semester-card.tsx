@@ -1,38 +1,35 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { Semester, Course } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Trash2, Plus, GripVertical } from 'lucide-react';
 import CourseRow from './course-row';
 import { calculateGPA } from '@/lib/gpa';
 import CgpaGauge from './cgpa-gauge';
+import { Input } from '../ui/input';
 
 interface SemesterCardProps {
   semester: Semester;
   semesterIndex: number;
-  onUpdate: (id: string, name: string) => void;
-  onDelete: (id: string) => void;
-  onAddCourse: (semesterId: string) => void;
-  onUpdateCourse: (semesterId: string, courseId: string, updatedCourse: Partial<Course>) => void;
-  onDeleteCourse: (semesterId: string, courseId: string) => void;
+  updateSemester: (id: string, name: string) => void;
+  deleteSemester: (id: string) => void;
+  addCourse: (semesterId: string) => void;
+  updateCourse: (semesterId: string, courseId: string, updatedCourse: Partial<Course>) => void;
+  deleteCourse: (semesterId: string, courseId: string) => void;
   isOnlySemester: boolean;
 }
 
 export default function SemesterCard({
   semester,
   semesterIndex,
-  onUpdate,
-  onDelete,
-  onAddCourse,
-  onUpdateCourse,
-  onDeleteCourse,
+  updateSemester,
+  deleteSemester,
+  addCourse,
+  updateCourse,
+  deleteCourse,
   isOnlySemester,
 }: SemesterCardProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(semester.name);
-
   const semesterGpa = useMemo(() => calculateGPA(semester.courses), [semester.courses]);
   const semesterCredits = useMemo(() => 
     semester.courses
@@ -40,48 +37,17 @@ export default function SemesterCard({
       .reduce((acc, course) => acc + (Number(course.credits) || 0), 0)
   , [semester.courses]);
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-  const handleNameBlur = () => {
-    if (name.trim() === '') {
-      setName(semester.name);
-    } else {
-      onUpdate(semester.id, name);
-    }
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleNameBlur();
-    }
-    if (e.key === 'Escape') {
-      setName(semester.name);
-      setIsEditing(false);
-    }
-  };
 
   return (
     <Card className="flex flex-col print-card">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-muted/50">
         <div className="flex items-center gap-2">
            <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
-           {isEditing ? (
             <Input
-              value={name}
-              onChange={handleNameChange}
-              onBlur={handleNameBlur}
-              onKeyDown={handleKeyDown}
-              autoFocus
-              className="h-8 text-lg font-semibold"
+              value={semester.name}
+              onChange={(e) => updateSemester(semester.id, e.target.value)}
+              className="h-8 text-lg font-semibold border-none focus-visible:ring-0 shadow-none bg-transparent"
             />
-           ) : (
-            <CardTitle onClick={() => setIsEditing(true)} className="cursor-pointer hover:text-primary transition-colors">
-                {semester.name}
-            </CardTitle>
-           )}
         </div>
         <div className="flex items-center gap-2">
             <div className="text-right">
@@ -93,12 +59,12 @@ export default function SemesterCard({
       </CardHeader>
       <CardContent className="p-0 flex-grow">
         <div className="divide-y">
-          {semester.courses.map((course, index) => (
+          {semester.courses.map((course) => (
             <CourseRow
               key={course.id}
               course={course}
-              onUpdateCourse={onUpdateCourse}
-              onDeleteCourse={onDeleteCourse}
+              onUpdateCourse={updateCourse}
+              onDeleteCourse={deleteCourse}
               semesterId={semester.id}
               isOnlyCourse={semester.courses.length === 1}
             />
@@ -109,13 +75,13 @@ export default function SemesterCard({
         </div>
       </CardContent>
       <CardFooter className="p-2 bg-muted/50 flex justify-between">
-        <Button variant="ghost" onClick={() => onAddCourse(semester.id)}>
+        <Button variant="ghost" onClick={() => addCourse(semester.id)}>
           <Plus className="mr-2 h-4 w-4" /> Add Course
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => onDelete(semester.id)}
+          onClick={() => deleteSemester(semester.id)}
           disabled={isOnlySemester}
           title={isOnlySemester ? "Cannot delete the only semester" : "Delete semester"}
         >
