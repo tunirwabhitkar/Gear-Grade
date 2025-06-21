@@ -23,6 +23,7 @@ import LoadingScreen from '@/components/geargrade/loading-screen';
 import AppHeader from '@/components/geargrade/header';
 import SemesterCard from '@/components/geargrade/semester-card';
 import { calculateGPA } from '@/lib/gpa';
+import PrintReport from '@/components/geargrade/print-report';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -136,7 +137,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <AppHeader cgpa={cgpa} totalCredits={totalCredits} />
 
-      <main className="flex-grow container mx-auto p-4 md:p-6 print-container">
+      <main className="flex-grow container mx-auto p-4 md:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 no-print">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">Semesters</h1>
           <div className="flex gap-2 flex-wrap justify-center">
@@ -190,7 +191,7 @@ export default function Home() {
         </div>
 
         {semesters.length === 0 ? (
-          <div className="text-center py-16 border-2 border-dashed rounded-lg">
+          <div className="text-center py-16 border-2 border-dashed rounded-lg no-print">
             <Cog className="mx-auto h-12 w-12 text-muted-foreground animate-spin-slow" />
             <h3 className="mt-4 text-lg font-medium">No Semesters Yet</h3>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -198,21 +199,26 @@ export default function Home() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            {semesters.map((semester, index) => (
-              <SemesterCard
-                key={semester.id}
-                semester={semester}
-                semesterIndex={index}
-                updateSemester={updateSemester}
-                deleteSemester={deleteSemester}
-                addCourse={addCourse}
-                updateCourse={updateCourse}
-                deleteCourse={deleteCourse}
-                isOnlySemester={semesters.length === 1}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 no-print">
+              {semesters.map((semester, index) => (
+                <SemesterCard
+                  key={semester.id}
+                  semester={semester}
+                  semesterIndex={index}
+                  updateSemester={updateSemester}
+                  deleteSemester={deleteSemester}
+                  addCourse={addCourse}
+                  updateCourse={updateCourse}
+                  deleteCourse={deleteCourse}
+                  isOnlySemester={semesters.length === 1}
+                />
+              ))}
+            </div>
+            <div className="hidden print:block">
+              <PrintReport semesters={semesters} cgpa={cgpa} totalCredits={totalCredits} />
+            </div>
+          </>
         )}
       </main>
 
