@@ -20,7 +20,8 @@ const gradePoints: { [key: string]: number } = {
   "D": 6,
   "E": 5,
   "F": 0,
-  "Z": 0
+  "Z": 0,
+  "P": 0  // For 0-credit MCCs, handled separately
 };
 
 
@@ -36,6 +37,8 @@ export function gradeToPoints(grade: string): number {
 
 /**
  * Calculates the Grade Point Average (GPA) for a list of courses.
+ * Includes only passed, credit-bearing subjects (S to E) in calculation.
+ * Excludes F, Z and 0-credit courses.
  * @param courses An array of Course objects.
  * @returns The calculated GPA.
  */
@@ -47,8 +50,12 @@ export function calculateGPA(courses: Course[]): number {
     const credit = Number(course.credits);
     const grade = course.grade?.toUpperCase();
 
-    // Only include subjects with credit > 0 and a grade that has points
-    if (!isNaN(credit) && credit > 0 && gradePoints.hasOwnProperty(grade)) {
+    // Only include passed subjects (S–E) with credits > 0
+    if (
+      credit > 0 &&
+      grade &&
+      ["S", "A", "B", "C", "D", "E"].includes(grade)
+    ) {
       const gp = gradePoints[grade];
       totalCredits += credit;
       weightedSum += credit * gp;
@@ -60,5 +67,5 @@ export function calculateGPA(courses: Course[]): number {
   }
 
   const gpa = weightedSum / totalCredits;
-  return Number.isNaN(gpa) ? 0 : gpa;
+  return Number.isNaN(gpa) ? 0 : parseFloat(gpa.toFixed(2));
 }
