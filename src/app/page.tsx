@@ -18,7 +18,6 @@ import { FileDown, Plus, RotateCcw, Cog } from 'lucide-react';
 import LoadingScreen from '@/components/geargrade/loading-screen';
 import AppHeader from '@/components/geargrade/header';
 import SemesterCard from '@/components/geargrade/semester-card';
-import AiSuggestionDialog from '@/components/geargrade/ai-suggestion-dialog';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +58,6 @@ export default function Home() {
             <Button onClick={addSemester}>
               <Plus className="mr-2 h-4 w-4" /> Add Semester
             </Button>
-            <AiSuggestionDialog semesters={semesters} />
             <Button variant="outline" onClick={handlePrint}>
               <FileDown className="mr-2 h-4 w-4" /> Export
             </Button>
