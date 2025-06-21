@@ -8,8 +8,8 @@ export const subjectCredits: Record<string, number> = {
     "ME210": 3, "ME211": 4, "ME212": 1.5, "ME213": 4, "ME214": 4,
     "ME215": 4, "ME216": 1.5, "ME217": 4, "ME218": 4, "ME219": 4,
     "ME220": 1, "ME221": 1.5, "ME222": 4, "ME223": 3, "ME224": 4,
-    "ME225": 0, "ME226": 1, "ME227": 2, "ME228": 8, "HS202": 3,
-    "SH201": 2, "EC234": 3, "SH202": 0,
+    "ME226": 1, "ME227": 2, "ME228": 8, "HS202": 3,
+    "SH201": 2, "EC234": 3,
 
     // Professional Electives (PEC) - each 3 credits
     "MEY01": 3, "MEY02": 3, "MEY03": 3, "MEY04": 3, "MEY05": 3,
@@ -22,4 +22,11 @@ export const subjectCredits: Record<string, number> = {
 
     // Swayam Open Electives
     "SWOXX1": 2, "SWOXX2": 2,
+
+    // Zero-Credit Mandatory Courses (MCC)
+    "FY201": 0,
+    "CE201": 0,
+    "SH202": 0,
+    "SH203": 0,
+    "ME225": 0,
 };
