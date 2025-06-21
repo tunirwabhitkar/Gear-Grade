@@ -32,9 +32,8 @@ export function gradeToPoints(grade: string): number {
  * @returns The calculated GPA.
  */
 export function calculateGPA(courses: Course[]): number {
-  // Filter courses that count towards GPA according to the rules.
+  // 1. Filter courses that count towards GPA according to the rules.
   // A course counts if it has more than 0 credits and the grade is not 'P' (Pass).
-  // This correctly includes courses with 'F' and 'Z' grades.
   const gpaCourses = courses.filter(course => {
     const credits = Number(course.credits) || 0;
     return credits > 0 && course.grade !== 'P';
@@ -45,13 +44,13 @@ export function calculateGPA(courses: Course[]): number {
     return 0;
   }
 
-  // Calculate the total credits for the denominator.
+  // 2. Calculate the total credits for the denominator.
   // This sums the credits of all courses that passed the filter.
   const totalCreditsForGpa = gpaCourses.reduce((acc, course) => {
     return acc + (Number(course.credits) || 0);
   }, 0);
 
-  // Calculate the total weighted points for the numerator.
+  // 3. Calculate the total weighted points for the numerator.
   // This sums the product of (credits * grade points) for each course.
   const totalWeightedPoints = gpaCourses.reduce((acc, course) => {
     const credits = Number(course.credits) || 0;
@@ -59,14 +58,11 @@ export function calculateGPA(courses: Course[]): number {
     return acc + (points * credits);
   }, 0);
 
-  // Avoid division by zero.
+  // 4. Avoid division by zero and calculate final GPA.
   if (totalCreditsForGpa === 0) {
     return 0;
   }
-
-  // Calculate the final GPA.
   const gpa = totalWeightedPoints / totalCreditsForGpa;
   
-  // Return the calculated GPA, or 0 if the result is NaN.
   return Number.isNaN(gpa) ? 0 : gpa;
 }
