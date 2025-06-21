@@ -22,22 +22,32 @@ export default function HelpDialog() {
           <span className="sr-only">Help</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>How GPA is Calculated</DialogTitle>
+          <DialogTitle>How It's Calculated</DialogTitle>
           <DialogDescription>
-            Understanding the mechanics behind your Grade Point Average.
+            Understanding the mechanics behind your academic scores.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="prose prose-sm dark:prose-invert">
-            <h3 className="font-semibold">The Formula</h3>
+            <h3 className="font-semibold">CGPA Formula</h3>
             <p>
-              Your GPA is calculated by dividing the total number of grade points earned by the total number of credit hours attempted.
+              Your Cumulative Grade Point Average (CGPA) is calculated by dividing the total number of grade points earned by the total number of credit hours attempted.
             </p>
             <div className="p-4 bg-muted rounded-md my-4 text-center font-code">
-              <p className="font-semibold">GPA = (Σ (Grade Points × Credits)) / (Σ Credits)</p>
+              <p className="font-semibold">CGPA = (Σ (Grade Points × Credits)) / (Σ Credits)</p>
             </div>
+
+            <h3 className="font-semibold mt-6">Percentage Conversion</h3>
+            <p>
+              The percentage is converted from your CGPA using the following formula:
+            </p>
+             <div className="p-4 bg-muted rounded-md my-4 text-center font-code">
+              <p className="font-semibold">Percentage = (CGPA - 0.75) × 10</p>
+            </div>
+             <p className="text-xs text-muted-foreground mt-2">Note: The result is capped at 0% if the CGPA is below 0.75.</p>
+
 
             <h3 className="font-semibold mt-6">Grading Scale</h3>
             <p>
@@ -61,7 +71,6 @@ export default function HelpDialog() {
                 </TableBody>
               </Table>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">The numeric grade value is used for AI suggestions.</p>
           </div>
         </div>
       </DialogContent>
