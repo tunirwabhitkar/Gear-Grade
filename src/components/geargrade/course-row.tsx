@@ -74,7 +74,7 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
         value={course.credits}
         onChange={(e) => onUpdate({ credits: e.target.valueAsNumber })}
         className="w-24"
-        readOnly={isCreditLocked}
+        disabled={isCreditLocked}
         title={isCreditLocked ? "Credits are automatically set for this course code." : "Enter course credits"}
       />
       <Select value={course.grade} onValueChange={(value) => onUpdate({ grade: value })}>
