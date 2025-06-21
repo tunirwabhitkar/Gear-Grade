@@ -15,12 +15,22 @@ interface CourseRowProps {
   isOnlyCourse: boolean;
 }
 
+const MANDATORY_GRADE_OPTIONS = [
+  { value: 'P' },
+  { value: 'F' },
+];
+
 export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: CourseRowProps) {
   const [isCreditLocked, setIsCreditLocked] = useState(false);
+  const [isMandatory, setIsMandatory] = useState(false);
 
   useEffect(() => {
     const upperCaseName = course.name.toUpperCase();
-    setIsCreditLocked(subjectCredits[upperCaseName] !== undefined);
+    const credits = subjectCredits[upperCaseName];
+    const creditIsDefined = credits !== undefined;
+    
+    setIsCreditLocked(creditIsDefined);
+    setIsMandatory(creditIsDefined && credits === 0);
   }, [course.name]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +44,10 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
       onUpdate({ name: newName });
     }
   };
+  
+  // Filter out 'P' from regular grades, as it's only for mandatory courses.
+  const regularGradeOptions = GRADE_OPTIONS.filter(g => g.value !== 'P');
+  const currentGradeOptions = isMandatory ? MANDATORY_GRADE_OPTIONS : regularGradeOptions;
   
   return (
     <div className="flex items-center gap-2 p-2 hover:bg-muted/50 transition-colors">
@@ -58,7 +72,7 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
           <SelectValue placeholder="Grade" />
         </SelectTrigger>
         <SelectContent>
-          {GRADE_OPTIONS.map((g) => (
+          {currentGradeOptions.map((g) => (
             <SelectItem key={g.value} value={g.value}>
               {g.value}
             </SelectItem>

@@ -9,6 +9,7 @@ export const GRADE_OPTIONS = [
   { value: 'E', points: 5.0 },
   { value: 'F', points: 0.0 },
   { value: 'Z', points: 0.0 },
+  { value: 'P', points: 0.0 },
 ];
 
 export function gradeToPoints(grade: string): number {
