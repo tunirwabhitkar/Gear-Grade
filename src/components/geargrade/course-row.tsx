@@ -25,7 +25,7 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
   const [isMandatory, setIsMandatory] = useState(false);
 
   useEffect(() => {
-    const upperCaseName = course.name.toUpperCase();
+    const upperCaseName = course.name.trim().toUpperCase();
     const credits = subjectCredits[upperCaseName];
     const creditIsDefined = credits !== undefined;
     
@@ -33,8 +33,6 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
     const isNowMandatory = creditIsDefined && credits === 0;
     setIsMandatory(isNowMandatory);
 
-    // If a course becomes mandatory, ensure its grade is valid.
-    // If current grade is not P or F, default to P.
     if (isNowMandatory) {
       if (course.grade !== 'P' && course.grade !== 'F') {
         onUpdate({ grade: 'P' });
@@ -45,7 +43,7 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
-    const upperCaseName = newName.toUpperCase();
+    const upperCaseName = newName.trim().toUpperCase();
     const credits = subjectCredits[upperCaseName];
 
     if (credits !== undefined) {
@@ -55,7 +53,6 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
     }
   };
   
-  // Filter out 'P' from regular grades, as it's only for mandatory courses.
   const regularGradeOptions = GRADE_OPTIONS.filter(g => g.value !== 'P');
   const currentGradeOptions = isMandatory ? MANDATORY_GRADE_OPTIONS : regularGradeOptions;
   
