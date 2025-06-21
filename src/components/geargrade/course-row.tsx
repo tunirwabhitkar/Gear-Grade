@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import type { Course } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,13 @@ interface CourseRowProps {
 }
 
 export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: CourseRowProps) {
+  const [isCreditLocked, setIsCreditLocked] = useState(false);
+
+  useEffect(() => {
+    const upperCaseName = course.name.toUpperCase();
+    setIsCreditLocked(subjectCredits[upperCaseName] !== undefined);
+  }, [course.name]);
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     const upperCaseName = newName.toUpperCase();
@@ -42,6 +50,8 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
         value={course.credits}
         onChange={(e) => onUpdate({ credits: e.target.valueAsNumber })}
         className="w-24"
+        readOnly={isCreditLocked}
+        title={isCreditLocked ? "Credits are automatically set for this course code." : "Enter course credits"}
       />
       <Select value={course.grade} onValueChange={(value) => onUpdate({ grade: value })}>
         <SelectTrigger className="w-28">
