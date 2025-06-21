@@ -2,7 +2,7 @@
 export const subjectCredits: Record<string, number> = {
     // Core Subjects (PCC, ESC, BSC, HSM)
     "MA201": 4, "PH201": 4, "CY201": 4, "HS201": 3, "ME201": 1.5,
-    "PH202": 1.5, "CY202": 1.5, "MA202": 4, "EE201": 4, "CS201": 3,
+    "PH202": 1.5, "CY202": 1.5, "MA202": 4, "MA204": 4, "EE201": 4, "CS201": 3,
     "ME202": 3, "EE202": 1.5, "CS202": 1.5, "ME203": 4, "ME204": 4,
     "ME205": 4, "ME206": 3, "ME207": 3, "ME208": 4, "ME209": 4,
     "ME210": 3, "ME211": 4, "ME212": 1.5, "ME213": 4, "ME214": 4,
