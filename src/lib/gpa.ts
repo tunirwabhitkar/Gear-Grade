@@ -48,7 +48,7 @@ export function calculateGPA(courses: Course[]): number {
     // This correctly includes courses failed with 'F' or 'Z' grades.
     totalCreditsForGpa += credits;
 
-    // Calculate the points for this course (e.g., 'A' -> 9.0)
+    // Calculate the points for this course (e.g., 'A' -> 9.0, 'F' -> 0.0)
     const points = gradeToPoints(grade);
     
     // Add the weighted points (credits * points) to the GPA numerator.
@@ -64,6 +64,6 @@ export function calculateGPA(courses: Course[]): number {
   // Calculate the final GPA.
   const gpa = totalWeightedPoints / totalCreditsForGpa;
   
-  // Return the calculated GPA, or 0 if the result is not a number (which shouldn't happen here).
+  // Return the calculated GPA, or 0 if the result is NaN (which should not happen with this logic).
   return Number.isNaN(gpa) ? 0 : gpa;
 }

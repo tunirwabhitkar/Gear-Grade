@@ -33,25 +33,26 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
     const isNowMandatory = creditIsDefined && credits === 0;
     setIsMandatory(isNowMandatory);
 
+    const updates: Partial<Course> = {};
+    let needsUpdate = false;
+
+    if (creditIsDefined && course.credits !== credits) {
+      updates.credits = credits;
+      needsUpdate = true;
+    }
+
     if (isNowMandatory) {
       if (course.grade !== 'P' && course.grade !== 'F') {
-        onUpdate({ grade: 'P' });
+        updates.grade = 'P';
+        needsUpdate = true;
       }
     }
-
-  }, [course.name, course.grade, onUpdate]);
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value;
-    const upperCaseName = newName.trim().toUpperCase();
-    const credits = subjectCredits[upperCaseName];
-
-    if (credits !== undefined) {
-      onUpdate({ name: newName, credits: credits });
-    } else {
-      onUpdate({ name: newName });
+    
+    if (needsUpdate) {
+        onUpdate(updates);
     }
-  };
+
+  }, [course.name, course.credits, course.grade, onUpdate]);
   
   const regularGradeOptions = GRADE_OPTIONS.filter(g => g.value !== 'P');
   const currentGradeOptions = isMandatory ? MANDATORY_GRADE_OPTIONS : regularGradeOptions;
@@ -61,7 +62,7 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
       <Input
         placeholder="Course Name or Code (e.g. MA201)"
         value={course.name}
-        onChange={handleNameChange}
+        onChange={(e) => onUpdate({ name: e.target.value })}
         className="flex-grow"
       />
       <Input
