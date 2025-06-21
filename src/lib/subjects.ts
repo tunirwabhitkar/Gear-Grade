@@ -29,10 +29,10 @@ export const subjectCredits: Record<string, number> = {
     // Civil
     "CVO01": 3, "CVO02": 3,
     // HSS
-    "HSO01": 3, "HSO02": 3, "HSO03": 3,
+    "HSO01": 3, "HSO02": 3, "HSO03": 3, "HSO04": 3, "HSO05": 3,
 
     // Swayam Open Electives
-    "SWO01": 2, "SWO02": 2, "SWO03": 2, "SWO04": 2,
+    "SWO01": 3, "SWO02": 3, "SWO03": 3, "SWO04": 3,
 
     // Zero-Credit Mandatory Courses (MCC)
     "FY201": 0,
