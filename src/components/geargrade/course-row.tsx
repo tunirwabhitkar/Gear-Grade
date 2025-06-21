@@ -30,8 +30,18 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
     const creditIsDefined = credits !== undefined;
     
     setIsCreditLocked(creditIsDefined);
-    setIsMandatory(creditIsDefined && credits === 0);
-  }, [course.name]);
+    const isNowMandatory = creditIsDefined && credits === 0;
+    setIsMandatory(isNowMandatory);
+
+    // If a course becomes mandatory, ensure its grade is valid.
+    // If current grade is not P or F, default to P.
+    if (isNowMandatory) {
+      if (course.grade !== 'P' && course.grade !== 'F') {
+        onUpdate({ grade: 'P' });
+      }
+    }
+
+  }, [course.name, course.grade, onUpdate]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
