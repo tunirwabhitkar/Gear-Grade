@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2 } from 'lucide-react';
 import { GRADE_OPTIONS } from '@/lib/gpa';
+import { subjectCredits } from '@/lib/subjects';
 
 interface CourseRowProps {
   course: Course;
@@ -14,12 +15,24 @@ interface CourseRowProps {
 }
 
 export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: CourseRowProps) {
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    const upperCaseName = newName.toUpperCase();
+    const credits = subjectCredits[upperCaseName];
+
+    if (credits !== undefined) {
+      onUpdate({ name: newName, credits: credits });
+    } else {
+      onUpdate({ name: newName });
+    }
+  };
+  
   return (
     <div className="flex items-center gap-2 p-2 hover:bg-muted/50 transition-colors">
       <Input
-        placeholder="Course Name (e.g. MATH 101)"
+        placeholder="Course Name or Code (e.g. MA201)"
         value={course.name}
-        onChange={(e) => onUpdate({ name: e.target.value })}
+        onChange={handleNameChange}
         className="flex-grow"
       />
       <Input
