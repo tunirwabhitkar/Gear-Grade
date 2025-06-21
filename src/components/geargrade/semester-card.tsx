@@ -97,8 +97,9 @@ export default function SemesterCard({
             <CourseRow
               key={course.id}
               course={course}
-              onUpdate={(updatedCourse) => onUpdateCourse(semester.id, course.id, updatedCourse)}
-              onDelete={() => onDeleteCourse(semester.id, course.id)}
+              onUpdateCourse={onUpdateCourse}
+              onDeleteCourse={onDeleteCourse}
+              semesterId={semester.id}
               isOnlyCourse={semester.courses.length === 1}
             />
           ))}
