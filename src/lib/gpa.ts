@@ -18,18 +18,26 @@ export function gradeToPoints(grade: string): number {
 }
 
 export function calculateGPA(courses: Course[]): number {
-  let totalPoints = 0;
-  let totalCredits = 0;
-
-  courses.forEach(course => {
+  // Filter for courses that should be included in GPA calculation.
+  // This excludes courses with 0 credits, Pass/Fail courses ('P'), and failed courses ('F', 'Z').
+  const gpaCourses = courses.filter(course => {
     const credits = Number(course.credits) || 0;
-    // Exclude Pass/Fail (P grade) courses from GPA calculation.
-    // F and Z grades are included as they are failed attempts.
-    if (credits > 0 && course.grade !== 'P') {
-      totalPoints += gradeToPoints(course.grade) * credits;
-      totalCredits += credits;
-    }
+    return credits > 0 && course.grade !== 'P' && course.grade !== 'F' && course.grade !== 'Z';
   });
+
+  if (gpaCourses.length === 0) {
+    return 0;
+  }
+
+  const totalPoints = gpaCourses.reduce((acc, course) => {
+    const credits = Number(course.credits) || 0;
+    return acc + gradeToPoints(course.grade) * credits;
+  }, 0);
+
+  const totalCredits = gpaCourses.reduce((acc, course) => {
+    const credits = Number(course.credits) || 0;
+    return acc + credits;
+  }, 0);
 
   if (totalCredits === 0) {
     return 0;
