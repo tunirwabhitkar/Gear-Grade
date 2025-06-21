@@ -51,7 +51,7 @@ export default function HelpDialog() {
 
             <h3 className="font-semibold mt-6">Grading Scale</h3>
             <p>
-              This app uses a standard 4.0 scale. Each letter grade corresponds to a specific number of grade points:
+              This app uses a 10-point scale. Each letter grade corresponds to a specific number of grade points:
             </p>
             <div className="rounded-md border mt-2">
               <Table>
@@ -70,6 +70,13 @@ export default function HelpDialog() {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+             <div className="mt-4 prose-p:my-1 prose-ul:my-2">
+              <p className="font-semibold">Notes:</p>
+              <ul className="list-disc pl-5 text-sm">
+                <li><span className="font-semibold">F Grade:</span> Student appeared but failed. Grade point is 0. Must reappear to pass and improve CGPA.</li>
+                <li><span className="font-semibold">Z Grade:</span> Student did not complete the course. Grade point is 0. Must reappear to pass and improve CGPA.</li>
+              </ul>
             </div>
           </div>
         </div>

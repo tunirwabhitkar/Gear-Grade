@@ -16,13 +16,13 @@ export default function CgpaGauge({ gpa }: CgpaGaugeProps) {
 
   const radius = 30;
   const circumference = 2 * Math.PI * radius;
-  const maxGpa = 4.0;
+  const maxGpa = 10.0;
   const offset = circumference - (animatedGpa / maxGpa) * circumference;
 
   const getStrokeColor = (value: number) => {
-    if (value >= 3.5) return 'hsl(var(--primary))';
-    if (value >= 2.5) return 'hsl(var(--chart-4))';
-    if (value >= 1.5) return 'hsl(var(--accent))';
+    if (value >= 8.5) return 'hsl(var(--primary))';
+    if (value >= 7.0) return 'hsl(var(--chart-4))';
+    if (value >= 5.0) return 'hsl(var(--accent))';
     return 'hsl(var(--destructive))';
   }
 
