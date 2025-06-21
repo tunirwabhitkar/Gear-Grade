@@ -62,9 +62,6 @@
   * {
     @apply border-border;
   }
-  html {
-     cursor: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2224%22%20viewBox%3D%220%200%2016%2024%22%3E%3Cpath%20d%3D%22M0%200l16%2012-7%201-3%207-6-20z%22%20fill-rule%3D%22evenodd%22%20fill%3D%22%23000%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%2F%3E%3C%2Fsvg%3E"), auto;
-  }
   body {
     @apply bg-background text-foreground;
   }
