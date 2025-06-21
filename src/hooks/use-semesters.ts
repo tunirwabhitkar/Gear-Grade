@@ -112,7 +112,9 @@ export function useSemesters() {
 
   const allCourses = semesters.flatMap(s => s.courses);
   const cgpa = calculateGPA(allCourses);
-  const totalCredits = allCourses.reduce((acc, course) => acc + (Number(course.credits) || 0), 0);
+  const totalCredits = allCourses
+    .filter(course => course.grade !== 'F' && course.grade !== 'Z')
+    .reduce((acc, course) => acc + (Number(course.credits) || 0), 0);
 
   return {
     semesters,

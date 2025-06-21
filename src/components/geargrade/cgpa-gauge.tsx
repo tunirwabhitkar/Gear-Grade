@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 
 interface CgpaGaugeProps {
   gpa: number;
+  label?: string;
 }
 
-export default function CgpaGauge({ gpa }: CgpaGaugeProps) {
+export default function CgpaGauge({ gpa, label = 'CGPA' }: CgpaGaugeProps) {
   const [animatedGpa, setAnimatedGpa] = useState(0);
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function CgpaGauge({ gpa }: CgpaGaugeProps) {
   }
 
   return (
-    <div className="flex items-center justify-center w-24 h-16" title={`CGPA: ${gpa.toFixed(2)}`}>
+    <div className="flex items-center justify-center w-24 h-16" title={`${label}: ${gpa.toFixed(2)}`}>
       <svg className="w-full h-full" viewBox="0 0 80 80">
         <circle
           cx="40"
@@ -64,7 +65,7 @@ export default function CgpaGauge({ gpa }: CgpaGaugeProps) {
           textAnchor="middle"
           className="text-[10px] font-medium fill-muted-foreground"
         >
-          CGPA
+          {label}
         </text>
       </svg>
     </div>

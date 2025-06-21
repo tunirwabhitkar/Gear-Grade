@@ -37,7 +37,7 @@ export default function AppHeader({ cgpa, totalCredits }: AppHeaderProps) {
               <p className="text-xs text-muted-foreground">Percentage</p>
             </div>
             <div className="text-right">
-              <p className="font-bold text-lg">{totalCredits} Credits</p>
+              <p className="font-bold text-lg">{totalCredits.toFixed(1)} Credits</p>
               <p className="text-xs text-muted-foreground">Total Earned</p>
             </div>
             <CgpaGauge gpa={cgpa} />

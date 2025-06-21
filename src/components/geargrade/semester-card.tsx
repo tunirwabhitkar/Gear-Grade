@@ -34,7 +34,11 @@ export default function SemesterCard({
   const [name, setName] = useState(semester.name);
 
   const semesterGpa = useMemo(() => calculateGPA(semester.courses), [semester.courses]);
-  const semesterCredits = useMemo(() => semester.courses.reduce((acc, course) => acc + (Number(course.credits) || 0), 0), [semester.courses]);
+  const semesterCredits = useMemo(() => 
+    semester.courses
+      .filter(course => course.grade !== 'F' && course.grade !== 'Z')
+      .reduce((acc, course) => acc + (Number(course.credits) || 0), 0)
+  , [semester.courses]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -81,10 +85,10 @@ export default function SemesterCard({
         </div>
         <div className="flex items-center gap-2">
             <div className="text-right">
-              <p className="font-bold text-base">{semesterCredits} Credits</p>
-              <p className="text-xs text-muted-foreground">This Semester</p>
+              <p className="font-bold text-base">{semesterCredits.toFixed(1)} Credits</p>
+              <p className="text-xs text-muted-foreground">Credits Earned</p>
             </div>
-            <CgpaGauge gpa={semesterGpa}/>
+            <CgpaGauge gpa={semesterGpa} label="SGPA"/>
         </div>
       </CardHeader>
       <CardContent className="p-0 flex-grow">
