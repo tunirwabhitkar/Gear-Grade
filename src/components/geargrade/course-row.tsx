@@ -50,7 +50,7 @@ export default function CourseRow({ course, onUpdate, onDelete, isOnlyCourse }: 
     if (needsUpdate) {
         onUpdate(updates);
     }
-  }, [course.name, course.credits, course.grade, isCreditLocked, isMandatory, creditsForCourse, onUpdate]);
+  }, [course.name, course.credits, course.grade, isCreditLocked, isMandatory, creditsForCourse]);
   
   const regularGradeOptions = GRADE_OPTIONS.filter(g => g.value !== 'P');
   const currentGradeOptions = isMandatory ? MANDATORY_GRADE_OPTIONS : regularGradeOptions;
