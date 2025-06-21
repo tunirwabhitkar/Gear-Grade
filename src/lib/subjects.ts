@@ -16,12 +16,23 @@ export const subjectCredits: Record<string, number> = {
     "MEY06": 3, "MEY07": 3, "MEY08": 3, "MEY09": 3, "MEY10": 3,
     "MEY11": 3, "MEY12": 3, "MEY13": 3, "MEY14": 3, "MEY15": 3,
 
-    // Open Electives (OEC) - typically 3 credits each
+    // Open Electives (OEC)
+    // Mechanical
     "MEO01": 3, "MEO02": 3, "MEO03": 3, "MEO04": 3, "MEO05": 3,
     "MEO06": 3, "MEO07": 3, "MEO08": 3, "MEO09": 3,
+    // CSE
+    "CSO01": 3, "CSO02": 3, "CSO03": 3,
+    // EEE
+    "EEO01": 3, "EEO02": 3,
+    // ECE
+    "ECO01": 3, "ECO02": 3,
+    // Civil
+    "CVO01": 3, "CVO02": 3,
+    // HSS
+    "HSO01": 3, "HSO02": 3, "HSO03": 3,
 
     // Swayam Open Electives
-    "SWOXX1": 2, "SWOXX2": 2,
+    "SWO01": 2, "SWO02": 2, "SWO03": 2, "SWO04": 2,
 
     // Zero-Credit Mandatory Courses (MCC)
     "FY201": 0,
