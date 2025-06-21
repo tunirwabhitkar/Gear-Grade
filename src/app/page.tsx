@@ -39,9 +39,11 @@ export default function Home() {
     deleteCourse,
     resetSemesters,
   } = useSemesters();
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
   
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2500);
+    setCurrentYear(new Date().getFullYear());
     return () => clearTimeout(timer);
   }, []);
 
@@ -223,7 +225,7 @@ export default function Home() {
       </main>
 
       <footer className="text-center p-4 text-muted-foreground text-sm no-print">
-        <p>GearGrade &copy; {new Date().getFullYear()}</p>
+        {currentYear && <p>GearGrade &copy; {currentYear}</p>}
       </footer>
     </div>
   );

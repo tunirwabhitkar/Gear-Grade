@@ -5,11 +5,11 @@ import type { Semester, Course } from '@/types';
 import { calculateGPA } from '@/lib/gpa';
 
 const INITIAL_SEMESTER: Semester = {
-  id: `semester-${Date.now()}`,
+  id: 'semester-initial-1',
   name: 'Semester 1',
   courses: [
-    { id: `course-${Date.now()}-1`, name: 'Example Course 1', credits: 3, grade: 'A' },
-    { id: `course-${Date.now()}-2`, name: 'Example Course 2', credits: 4, grade: 'B' },
+    { id: 'course-initial-1', name: 'Example Course 1', credits: 3, grade: 'A' },
+    { id: 'course-initial-2', name: 'Example Course 2', credits: 4, grade: 'B' },
   ],
 };
 
