@@ -225,12 +225,6 @@ export default function Home() {
           </div>
         </div>
 
-        {semesters.length > 1 && (
-          <div className="mb-6">
-            <CgpaTrendChart data={chartData} />
-          </div>
-        )}
-
         {semesters.length === 0 ? (
           <div className="text-center py-16 border-2 border-dashed rounded-lg no-print">
             <Cog className="mx-auto h-12 w-12 text-muted-foreground animate-spin-slow" />
@@ -260,6 +254,12 @@ export default function Home() {
               <PrintReport semesters={semesters} cgpa={cgpa} totalCredits={totalCredits} />
             </div>
           </>
+        )}
+
+        {semesters.length > 1 && (
+          <div className="mt-6">
+            <CgpaTrendChart data={chartData} />
+          </div>
         )}
       </main>
 
