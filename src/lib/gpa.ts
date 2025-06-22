@@ -21,7 +21,7 @@ const gradePoints: { [key: string]: number } = {
   "E": 5,
   "F": 0,
   "Z": 0,
-  "P": 0  // For 0-credit MCCs, handled separately
+  "P": 0
 };
 
 
@@ -36,30 +36,11 @@ export function gradeToPoints(grade: string): number {
 }
 
 /**
- * Applies a tolerance to a calculated CGPA to align with university reporting.
- * This effectively truncates the CGPA to two decimal places instead of rounding.
- * @param cgpa The calculated CGPA, ideally to 3 decimal places.
- * @returns The adjusted CGPA.
- */
-function applyTolerance(cgpa: number): number {
-  const rounded = parseFloat(cgpa.toFixed(2));
-  const floor = Math.floor(cgpa * 100) / 100;
-  // Per the rule, if the difference between standard rounding and truncation is small,
-  // prefer the truncated (floor) value.
-  if (Math.abs(rounded - floor) <= 0.03) {
-    return floor;
-  }
-  return rounded;
-}
-
-
-/**
- * Calculates the Grade Point Average (GPA) for a list of courses.
- * For GPA, this includes all credit-bearing subjects. F/Z grades count as
- * 0 points but their credits are included in the total.
- * Excludes 0-credit courses (like 'P' grade MCCs).
+ * Calculates the Grade Point Average (GPA) for a list of courses based on PTU rules.
+ * For GPA/CGPA, this includes only passed, credit-bearing subjects (S to E).
+ * Excludes F, Z, and 0-credit courses.
  * @param courses An array of Course objects.
- * @returns The calculated and adjusted GPA.
+ * @returns The calculated GPA, rounded to 2 decimal places.
  */
 export function calculateGPA(courses: Course[]): number {
   let totalCredits = 0;
@@ -67,14 +48,15 @@ export function calculateGPA(courses: Course[]): number {
 
   courses.forEach(course => {
     const credit = Number(course.credits);
-    if (isNaN(credit) || credit <= 0) {
-      return; // Skip 0-credit courses
-    }
-
     const grade = course.grade?.toUpperCase();
 
-    // Include any grade that has points defined and is not a Pass/Fail 0-credit course
-    if (grade && gradePoints.hasOwnProperty(grade) && grade !== 'P') {
+    // PTU Rule: Only include passed subjects (S–E) with credits > 0
+    if (
+      !isNaN(credit) &&
+      credit > 0 &&
+      grade &&
+      ["S", "A", "B", "C", "D", "E"].includes(grade)
+    ) {
       const gp = gradePoints[grade];
       totalCredits += credit;
       weightedSum += credit * gp;
@@ -89,9 +71,6 @@ export function calculateGPA(courses: Course[]): number {
   if (Number.isNaN(rawGpa)) {
     return 0.0;
   }
-
-  // Per request, calculate to 3 decimal places before applying tolerance
-  const gpaThreeDecimals = parseFloat(rawGpa.toFixed(3));
   
-  return applyTolerance(gpaThreeDecimals);
+  return parseFloat(rawGpa.toFixed(2));
 }
