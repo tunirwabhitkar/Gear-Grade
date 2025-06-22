@@ -24,6 +24,7 @@ import AppHeader from '@/components/geargrade/header';
 import SemesterCard from '@/components/geargrade/semester-card';
 import { calculateGPA } from '@/lib/gpa';
 import PrintReport from '@/components/geargrade/print-report';
+import CgpaTrendChart from '@/components/geargrade/cgpa-trend-chart';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +47,11 @@ export default function Home() {
     setCurrentYear(new Date().getFullYear());
     return () => clearTimeout(timer);
   }, []);
+
+  const chartData = semesters.map(semester => ({
+    name: semester.name,
+    sgpa: parseFloat(calculateGPA(semester.courses).toFixed(2)),
+  }));
 
   const handlePrintPdf = () => {
     window.print();
@@ -191,6 +197,12 @@ export default function Home() {
             </AlertDialog>
           </div>
         </div>
+
+        {semesters.length > 1 && (
+          <div className="mb-6">
+            <CgpaTrendChart data={chartData} />
+          </div>
+        )}
 
         {semesters.length === 0 ? (
           <div className="text-center py-16 border-2 border-dashed rounded-lg no-print">
