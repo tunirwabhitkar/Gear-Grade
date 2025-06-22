@@ -55,9 +55,9 @@ function applyTolerance(cgpa: number): number {
 
 /**
  * Calculates the Grade Point Average (GPA) for a list of courses.
- * Includes only passed, credit-bearing subjects (S to E) in calculation.
- * Excludes F, Z and 0-credit courses.
- * Applies a tolerance-based rounding system at the end.
+ * For GPA, this includes all credit-bearing subjects. F/Z grades count as
+ * 0 points but their credits are included in the total.
+ * Excludes 0-credit courses (like 'P' grade MCCs).
  * @param courses An array of Course objects.
  * @returns The calculated and adjusted GPA.
  */
@@ -67,14 +67,14 @@ export function calculateGPA(courses: Course[]): number {
 
   courses.forEach(course => {
     const credit = Number(course.credits);
+    if (isNaN(credit) || credit <= 0) {
+      return; // Skip 0-credit courses
+    }
+
     const grade = course.grade?.toUpperCase();
 
-    // Only include passed subjects (S–E) with credits > 0
-    if (
-      credit > 0 &&
-      grade &&
-      ["S", "A", "B", "C", "D", "E"].includes(grade)
-    ) {
+    // Include any grade that has points defined and is not a Pass/Fail 0-credit course
+    if (grade && gradePoints.hasOwnProperty(grade) && grade !== 'P') {
       const gp = gradePoints[grade];
       totalCredits += credit;
       weightedSum += credit * gp;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Semester, Course } from '@/types';
 import { calculateGPA } from '@/lib/gpa';
 
@@ -110,10 +110,26 @@ export function useSemesters() {
     ]);
   }, []);
 
-  const allCourses = semesters.flatMap(s => s.courses);
-  const cgpa = calculateGPA(allCourses);
-  const totalCredits = allCourses
-    .filter(course => course.grade !== 'F' && course.grade !== 'Z')
+  const latestCourseAttempts = useMemo(() => {
+    const courseMap = new Map<string, Course>();
+    semesters.forEach(semester => {
+        semester.courses.forEach(course => {
+            const courseKey = course.name.trim().toUpperCase();
+            if (courseKey) {
+                courseMap.set(courseKey, course);
+            }
+        });
+    });
+    return Array.from(courseMap.values());
+  }, [semesters]);
+
+  const cgpa = calculateGPA(latestCourseAttempts);
+  
+  const totalCredits = latestCourseAttempts
+    .filter(course => {
+        const grade = course.grade?.toUpperCase();
+        return grade && ["S", "A", "B", "C", "D", "E"].includes(grade);
+    })
     .reduce((acc, course) => acc + (Number(course.credits) || 0), 0);
 
   return {
