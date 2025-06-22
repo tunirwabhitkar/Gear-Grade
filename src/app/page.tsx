@@ -17,14 +17,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { FileDown, Plus, RotateCcw, Cog, ChevronDown, FileText, FileSpreadsheet, FileSignature } from 'lucide-react';
+import { FileDown, Plus, RotateCcw, Cog, ChevronDown, FileText, FileSpreadsheet, FileSignature, FlaskConical } from 'lucide-react';
 import LoadingScreen from '@/components/geargrade/loading-screen';
 import AppHeader from '@/components/geargrade/header';
 import SemesterCard from '@/components/geargrade/semester-card';
 import { calculateGPA } from '@/lib/gpa';
 import PrintReport from '@/components/geargrade/print-report';
 import CgpaTrendChart from '@/components/geargrade/cgpa-trend-chart';
+import WhatIfPlanner from '@/components/geargrade/what-if-planner';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -152,6 +161,24 @@ export default function Home() {
             <Button onClick={addSemester}>
               <Plus className="mr-2 h-4 w-4" /> Add Semester
             </Button>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline">
+                  <FlaskConical className="mr-2 h-4 w-4" /> Scenario Planner
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-full sm:max-w-xl p-0 flex flex-col">
+                  <SheetHeader className="p-6 pb-2">
+                    <SheetTitle>What If? Scenario Planner</SheetTitle>
+                    <SheetDescription>
+                      Project your future CGPA by adding hypothetical semesters and grades. This won't affect your saved data.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <WhatIfPlanner baseSemesters={semesters} baseCgpa={cgpa} />
+              </SheetContent>
+            </Sheet>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
